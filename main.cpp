@@ -144,14 +144,16 @@ void API(unsigned int* Ms, unsigned int sizeInputs, unsigned int MMC, unsigned i
             std::cout << inputs[i] << ", ";
         } 
     }
-    
     std::cout << "Type the keynum to chose the output:\n"
-    << "\t\t MMC[1]\tMaximum simplifier[2]" << std::endl;
+    << "\tMMC[1]  Maximum simplifier[2]  Both[3]" << std::endl;
+    std::cout << " >>>";
     answer = std::cin.get();
-    } while(!(answer > 47 && answer < 51));
+    } while(!(answer > 47 && answer < 52));
+    std::cout << std::endl;
     separator(110);
-    if (answer == 48)
+    switch (answer)
     {
+    case '1':
         for (size_t i = 0; i < 10000000; i++)
         {
             if (Ms[i+1] == 0)
@@ -166,12 +168,69 @@ void API(unsigned int* Ms, unsigned int sizeInputs, unsigned int MMC, unsigned i
             std::cout << Ms[i] << ", ";
         }
         std::cout << "MMC = " << MMC << std::endl;
-    }
-    else
-    {
+        break;
+    case '2':
         std::cout << "Max simplifier = " << simplifier << std::endl;
+        for (unsigned short i = 0; i < sizeInputs; i++)
+        {
+            if (sizeInputs == 1 && i == 0)
+            {
+                std::cout << "he input simplified = [" << inputs[i]/simplifier << "]" << std::endl;
+            }
+            
+            else if (i == 0)
+            {
+                std::cout << "he input simplified = [" << inputs[i]/simplifier << ", ";
+            }
+            else if (i == sizeInputs - 1)
+            {
+                std::cout << inputs[i]/simplifier << "]" << std::endl;
+            }
+            else
+            {
+                std::cout << inputs[i]/simplifier << ", ";
+            } 
+        }
+        break;
+    default:
+        for (size_t i = 0; i < 10000000; i++)
+        {
+            if (Ms[i+1] == 0)
+            {
+                std::cout << Ms[i] << "]"<< std::endl;
+                break;
+            }
+            if (i == 0)
+            {
+                std::cout << "steps = [" << Ms[i] << ", ";
+            }
+            std::cout << Ms[i] << ", ";
+        }
+        std::cout << "MMC = " << MMC << std::endl;
+        std::cout << '\n';
+        std::cout << "Max simplifier = " << simplifier << std::endl;
+        for (unsigned short i = 0; i < sizeInputs; i++)
+        {
+            if (sizeInputs == 1 && i == 0)
+            {
+                std::cout << "The input simplified = [" << inputs[i]/simplifier << "]" << std::endl;
+            }
+            
+            else if (i == 0)
+            {
+                std::cout << "The input simplified = [" << inputs[i]/simplifier << ", ";
+            }
+            else if (i == sizeInputs - 1)
+            {
+                std::cout << inputs[i]/simplifier << "]" << std::endl;
+            }
+            else
+            {
+                std::cout << inputs[i]/simplifier << ", ";
+            } 
+        }
+        break;
     }
-    
 }
 
 int main(){
