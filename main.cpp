@@ -1,5 +1,102 @@
 #include <iostream>
 #include <conio.h>
+#include <ctype.h>
+//TODO Last item in the input is being mistakely calculated
+
+int powerOf10(int);
+void getPrimes(unsigned int*, int);
+unsigned short translInput(unsigned int*, int);
+unsigned int* getMax(unsigned int*, int);
+void separator(unsigned short);
+void API(unsigned int*, unsigned int, unsigned int, unsigned int, unsigned int*);
+
+int main(){
+    unsigned int StepsToMMC[100], inputsBase[8], inputs[8], prime[500], simplifier = 1, MMCResult = 1;
+    unsigned short currentIndex = 0, lenInputs;
+    bool isDone = true, isAllM = true;
+    char answer;
+    while (1){
+        std::cout << "Type \'q\' to terminate application or press any key to continue:" << std::endl;
+        answer = _getch();
+        std::cout << '\n';
+        switch (answer)
+        {
+        case 'q':
+            return 1;
+            break;
+        
+        default:
+            currentIndex = 0;
+            simplifier = 1;
+            MMCResult = 1;
+            getPrimes(prime, 500);
+            lenInputs = translInput(inputs, 8);
+            for (unsigned short i = 0; i < lenInputs; i++)
+            {
+                inputsBase[i] = inputs[i];
+            }
+            bool inputsIsM[lenInputs] = {false*lenInputs};
+            for (unsigned short i = 0; i < sizeof(prime)/sizeof(int); i++)
+            {
+                unsigned int* max = getMax(inputs, lenInputs);
+                isAllM = true;
+                if (prime[i] <= *max)
+                {
+                    for (unsigned int j = 0; j < lenInputs; j++)
+                    {
+                        isDone = true;
+                        if (inputs[j] != 1)
+                        {
+                            isDone = false;
+                        }
+                        while(inputs[j] > 1)
+                        {
+                            if (inputs[j] % prime[i] == 0)
+                            {
+                                StepsToMMC[currentIndex] = prime[i];
+                                for (unsigned short u = 0; u < lenInputs; u++)
+                                {
+                                    inputsIsM[u] = false;
+                                }
+                                for (unsigned short l = 0; l < lenInputs; l++)
+                                {
+                                    if (inputs[l] % prime[i] == 0)
+                                    {
+                                        inputs[l] /= prime[i];
+                                        inputsIsM[l] = true;
+                                    } 
+                                    if (!inputsIsM[l])
+                                    {
+                                        isAllM = false;
+                                    }
+                                }
+                                if (isAllM)
+                                {
+                                    simplifier *= prime[i];
+                                }
+                                MMCResult *= prime[i];
+                                currentIndex++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (isDone)
+                {
+                    break;
+                }
+            }
+            StepsToMMC[currentIndex] = 0;
+            API(StepsToMMC, lenInputs, MMCResult, simplifier, inputsBase);
+            system("pause");
+            system("cls");
+            break;
+        }
+    }
+}
 
 int powerOf10(int exponent){
     switch (exponent)
@@ -146,8 +243,8 @@ void API(unsigned int* Ms, unsigned int sizeInputs, unsigned int MMC, unsigned i
     }
     std::cout << "Type the keynum to chose the output:\n"
     << "\tMMC[1]  Maximum simplifier[2]  Both[3]" << std::endl;
-    std::cout << " >>>";
-    answer = std::cin.get();
+    std::cout << '\n';
+    answer = _getch();
     } while(!(answer > 47 && answer < 52));
     std::cout << std::endl;
     separator(110);
@@ -200,11 +297,14 @@ void API(unsigned int* Ms, unsigned int sizeInputs, unsigned int MMC, unsigned i
                 std::cout << Ms[i] << "]"<< std::endl;
                 break;
             }
-            if (i == 0)
+            else if (i == 0)
             {
                 std::cout << "steps = [" << Ms[i] << ", ";
             }
+            else
+            {
             std::cout << Ms[i] << ", ";
+            }
         }
         std::cout << "MMC = " << MMC << std::endl;
         std::cout << '\n';
@@ -231,74 +331,4 @@ void API(unsigned int* Ms, unsigned int sizeInputs, unsigned int MMC, unsigned i
         }
         break;
     }
-}
-
-int main(){
-    unsigned int StepsToMMC[100], inputsBase[8], inputs[8], prime[500], simplifier = 1, MMCResult = 1;
-    unsigned short currentIndex = 0, lenInputs;
-    bool isDone = true, isAllM = true;
-    getPrimes(prime, 500);
-    lenInputs = translInput(inputs, 8);
-    for (unsigned short i = 0; i < lenInputs; i++)
-    {
-        inputsBase[i] = inputs[i];
-    }
-    bool inputsIsM[lenInputs] = {false*lenInputs};
-    for (unsigned short i = 0; i < sizeof(prime)/sizeof(int); i++)
-    {
-        unsigned int* max = getMax(inputs, lenInputs);
-        isAllM = true;
-        if (prime[i] < *max)
-        {
-            for (unsigned int j = 0; j < lenInputs; j++)
-            {
-                isDone = true;
-                if (inputs[j] != 1)
-                {
-                    isDone = false;
-                }
-                while(inputs[j] > 1)
-                {
-                    if (inputs[j] % prime[i] == 0)
-                    {
-                        StepsToMMC[currentIndex] = prime[i];
-                        for (unsigned short u = 0; u < lenInputs; u++)
-                        {
-                            inputsIsM[u] = false;
-                        }
-                        for (unsigned short l = 0; l < lenInputs; l++)
-                        {
-                            if (inputs[l] % prime[i] == 0)
-                            {
-                                inputs[l] /= prime[i];
-                                inputsIsM[l] = true;
-                            } 
-                            if (!inputsIsM[l])
-                            {
-                                isAllM = false;
-                            }
-                        }
-                        if (isAllM)
-                        {
-                            simplifier *= prime[i];
-                        }
-                        MMCResult *= prime[i];
-                        currentIndex++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        else if (isDone)
-        {
-            break;
-        }
-    }
-    StepsToMMC[currentIndex] = 0;
-    API(StepsToMMC, lenInputs, MMCResult, simplifier, inputsBase);
-    system("pause");
-    return 0;
 }
